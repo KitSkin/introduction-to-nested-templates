@@ -100,7 +100,8 @@
                     "adminUserName": { "value": "[parameters('adminUserName')]" },
                     "adminPassword": { "value": "[parameters('adminPassword')]" },
                     "domainName": { "value": "[parameters('domainName')]" },
-                    "VMName": { "value": "[concat(parameters('vmPrefix'),'2')]" },
+                    "vmPrefix": { "value": "[concat(parameters('vmPrefix'))]" },
+                    "vmIndex" : "2",
                     "DomainJoinscriptUrl": { "value": "[variables('ADJoinScript')]" }
                 }
             }
@@ -121,7 +122,8 @@
                 "parameters": {
                     "adminUserName": { "value": "[parameters('adminUserName')]" },
                     "adminPassword": { "value": "[parameters('adminPassword')]" },
-                    "VMName": { "value": "[concat(parameters('vmPrefix'),'1')]" },
+                    "vmPrefix": { "value": "[concat(parameters('vmPrefix'))]" },
+                    "vmIndex" : "2",
                     "domainName": { "value": "[parameters('domainName')]" }
                 }
             }
