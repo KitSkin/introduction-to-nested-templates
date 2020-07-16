@@ -76,7 +76,7 @@
     "MABSClientVMSubnetRef": "[concat(variables('MABSClientVMVnetID'), '/subnets/', variables('OPSTrainingVNETSubnet1Name'))]",
     "MABSClientVMStorageAccountContainerName": "vhds",
     "MABSClientVMNicName": "[concat(variables('MABSClientVMName'), 'NetworkInterface')]",
-    "MABSDISK1": "[concat('http://',variables('vmstorageName'),'.blob.core.windows.net/','vhds','/','dataDisk1.vhd')]",
+    "MABSDISK1": "[concat('http://',variables('vmstorageName'),'.blob.core.windows.net/','vhds','/',variables('MABSClientVMName'),'-dataDisk1.vhd')]",
     "MABSClientVM-IPName": "[concat(variables('MABSClientVMName'),'-IP')]"
   },
   "resources": [
