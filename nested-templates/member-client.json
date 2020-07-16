@@ -70,14 +70,14 @@
     "MABSClientVMName": "[parameters('vmName')]",
     "MABSClientVMImagePublisher": "MicrosoftWindowsDesktop",
     "MABSClientVMImageOffer": "Windows-10",
-    "MABSClientVMOSDiskName": "MABSClientVMOSDisk",
+    "MABSClientVMOSDiskName": "[concat(variables('MABSClientVMName'),'-OSDisk')]",
     "MABSClientVMVmSize": "Standard_D2S_v3",
     "MABSClientVMVnetID": "[resourceId('Microsoft.Network/virtualNetworks', 'OPSTrainingVNET')]",
     "MABSClientVMSubnetRef": "[concat(variables('MABSClientVMVnetID'), '/subnets/', variables('OPSTrainingVNETSubnet1Name'))]",
     "MABSClientVMStorageAccountContainerName": "vhds",
     "MABSClientVMNicName": "[concat(variables('MABSClientVMName'), 'NetworkInterface')]",
     "MABSDISK1": "[concat('http://',variables('vmstorageName'),'.blob.core.windows.net/','vhds','/','dataDisk1.vhd')]",
-    "MABSClientVM-IPName": "[concat(parameters('vmName'),'-IP')]"
+    "MABSClientVM-IPName": "[concat(variables('MABSClientVMName'),'-IP')]"
   },
   "resources": [
     {
