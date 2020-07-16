@@ -84,7 +84,7 @@
             }
         },
         {
-            "name": "MemberClient",
+            "name": "[concat('MemberClient',copyIndex())]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2016-09-01",
             "dependsOn": [
@@ -100,29 +100,9 @@
                     "adminUserName": { "value": "[parameters('adminUserName')]" },
                     "adminPassword": { "value": "[parameters('adminPassword')]" },
                     "domainName": { "value": "[parameters('domainName')]" },
-                    "vmName": { "value": "[concat(parameters('vmPrefix'),'2')]" },
-                    "DomainJoinscriptUrl": { "value": "[variables('ADJoinScript')]" }
-                }
-            }
-        },
-        {
-            "name": "WorkgroupClient",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2016-09-01",
-            "dependsOn": [
-                "Microsoft.Resources/deployments/VirtualNetworkWithDNS"
-            ],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[concat(variables('baseUri'), '/', 'nested-templates/member-client.json')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "adminUserName": { "value": "[parameters('adminUserName')]" },
-                    "adminPassword": { "value": "[parameters('adminPassword')]" },
-                    "domainName": { "value": "[parameters('domainName')]" },
-                    "vmName": { "value": "[concat(parameters('vmPrefix'),'1')]" }
+                    "vmName": { "value": "[concat(parameters('vmPrefix'),copyIndex())]" },
+                    "DomainJoinscriptUrl": { "value": "[variables('ADJoinScript')]" },
+                    "JoinDomain": { "value": "[not(equals(copyIndex(),0))]"}
                 }
             }
         }

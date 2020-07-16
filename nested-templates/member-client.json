@@ -37,6 +37,10 @@
         "description": "script to execute"
       }
     },
+    "JoinDomain": {
+      "type": "bool",
+      "defaultValue": "[not(empty(parameters('DomainJoinscriptUrl')))]"
+    },
     "vmName": {
       "type": "string",
       "defaultValue": "MSVM1",
@@ -178,7 +182,7 @@
       },
       "resources": [
         {
-          "condition": "[not(empty(parameters('DomainJoinscriptUrl')))]",
+          "condition": "[parameters('JoinDomain')]",
           "name": "DomainJoin",
           "type": "extensions",
           "location": "[resourceGroup().location]",
