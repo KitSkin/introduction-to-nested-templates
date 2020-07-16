@@ -106,7 +106,7 @@
                     "domainName": { "value": "[parameters('domainName')]" },
                     "vmName": { "value": "[concat(parameters('vmPrefix'),copyIndex())]" },
                     "DomainJoinscriptUrl": { "value": "[variables('ADJoinScript')]" },
-                    "JoinDomain": { "value": "[not(equals(copyIndex(),0))]"}
+                    "JoinDomain": { "value": "[greaterOrEquals(copyIndex(),1)]"}
                 }
             },
             "copy": {
