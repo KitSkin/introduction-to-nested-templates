@@ -36,14 +36,9 @@
         "description": "script to execute"
       }
     },
-    "vmPrefix": {
+    "vmName": {
       "type": "string",
-      "defaultValue": "MSVM",
-      "minLength": 1
-    },
-    "vmIndex": {
-      "type": "string",
-      "defaultValue": "1",
+      "defaultValue": "MSVM1",
       "minLength": 1
     },
     "VMWindowsOSVersion": {
@@ -71,7 +66,7 @@
     "scriptFolder": ".",
     "DomainJoinscriptFileName": "domain-join.ps1",
     "DomainJoinscriptParameters": "[concat(' -domain ', parameters('domainName'), ' -user ', parameters('adminUsername'), ' -password ', parameters('adminPassword'))]",
-    "MABSClientVMName": "[concat(parameters('vmPrefix'),parameters('vmIndex'))]",
+    "MABSClientVMName": "[parameters('vmName')]",
     "MABSClientVMImagePublisher": "MicrosoftWindowsDesktop",
     "MABSClientVMImageOffer": "Windows-10",
     "MABSClientVMOSDiskName": "MABSClientVMOSDisk",
@@ -81,7 +76,7 @@
     "MABSClientVMStorageAccountContainerName": "vhds",
     "MABSClientVMNicName": "[concat(variables('MABSClientVMName'), 'NetworkInterface')]",
     "MABSDISK1": "[concat('http://',variables('vmstorageName'),'.blob.core.windows.net/','vhds','/','dataDisk1.vhd')]",
-    "MABSClientVM-IPName": "[concat('MABSClientVM',parameters('vmIndex'),'-IP')]"
+    "MABSClientVM-IPName": "[concat(parameters('vmName'),'-IP')]"
   },
   "resources": [
     {
