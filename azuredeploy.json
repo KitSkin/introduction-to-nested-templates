@@ -30,6 +30,10 @@
         "clientCount": {
             "type": "int",
             "defaultValue": 2
+        },
+        "skipClientJoins": {
+            "type": "int",
+            "defaultValue": 1
         }
     },
     "variables": {
@@ -106,7 +110,7 @@
                     "domainName": { "value": "[parameters('domainName')]" },
                     "vmName": { "value": "[concat(parameters('vmPrefix'),copyIndex())]" },
                     "DomainJoinscriptUrl": { "value": "[variables('ADJoinScript')]" },
-                    "JoinDomain": { "value": "[greaterOrEquals(copyIndex(),1)]"}
+                    "JoinDomain": { "value": "[greaterOrEquals(copyIndex(),parameters('skipClientJoins'))]"}
                 }
             },
             "copy": {
