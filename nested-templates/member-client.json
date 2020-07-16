@@ -32,6 +32,7 @@
     },
     "DomainJoinscriptUrl": {
       "type": "string",
+      "defaultValue": "",
       "metadata": {
         "description": "script to execute"
       }
