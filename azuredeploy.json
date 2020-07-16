@@ -26,6 +26,10 @@
         "vmPrefix": {
             "type": "string",
             "defaultValue": "MSVM"
+        },
+        "clientCount": {
+            "type": "int",
+            "defaultValue": 2
         }
     },
     "variables": {
@@ -104,6 +108,10 @@
                     "DomainJoinscriptUrl": { "value": "[variables('ADJoinScript')]" },
                     "JoinDomain": { "value": "[not(equals(copyIndex(),0))]"}
                 }
+            },
+            "copy": {
+                "name": "MemberClients",
+                "count": "[parameters('clientCount')]"
             }
         }
     ],
