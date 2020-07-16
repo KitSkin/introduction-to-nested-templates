@@ -36,19 +36,26 @@
         "description": "script to execute"
       }
     },
-    "DomainJoinedVMName": {
+    "vmPrefix": {
       "type": "string",
-      "defaultValue": "MSVM1",
+      "defaultValue": "MSVM",
       "minLength": 1
     },
-    "DomainJoinedVMWindowsOSVersion": {
+    "vmIndex": {
       "type": "string",
-      "defaultValue": "2016-Datacenter",
+      "defaultValue": "1",
+      "minLength": 1
+    },
+    "VMWindowsOSVersion": {
+      "type": "string",
+      "defaultValue": "20h1-ent",
       "allowedValues": [
-        "2008-R2-SP1",
-        "2012-Datacenter",
-        "2012-R2-Datacenter",
-        "2016-Datacenter"
+        "19h1-pro",
+        "19h2-pro",
+        "20h1-pro",
+        "19h1-ent",
+        "19h2-ent",
+        "20h1-ent"
       ]
     }
   },
@@ -64,16 +71,17 @@
     "scriptFolder": ".",
     "DomainJoinscriptFileName": "domain-join.ps1",
     "DomainJoinscriptParameters": "[concat(' -domain ', parameters('domainName'), ' -user ', parameters('adminUsername'), ' -password ', parameters('adminPassword'))]",
-    "MABSClientVM1ImagePublisher": "MicrosoftWindowsDesktop",
-    "MABSClientVM1ImageOffer": "Windows-10",
-    "MABSClientVM1OSDiskName": "20h1-ent",
-    "MABSClientVM1VmSize": "Standard_D2S_v3",
-    "MABSClientVM1VnetID": "[resourceId('Microsoft.Network/virtualNetworks', 'OPSTrainingVNET')]",
-    "MABSClientVM1SubnetRef": "[concat(variables('MABSClientVM1VnetID'), '/subnets/', variables('OPSTrainingVNETSubnet1Name'))]",
-    "MABSClientVM1StorageAccountContainerName": "vhds",
-    "MABSClientVM1NicName": "[concat(parameters('DomainJoinedVMName'), 'NetworkInterface')]",
+    "MABSClientVMName": "[concat(parameters('vmPrefix'),parameters('vmIndex'))]",
+    "MABSClientVMImagePublisher": "MicrosoftWindowsDesktop",
+    "MABSClientVMImageOffer": "Windows-10",
+    "MABSClientVMOSDiskName": "MABSClientVMOSDisk",
+    "MABSClientVMVmSize": "Standard_D2S_v3",
+    "MABSClientVMVnetID": "[resourceId('Microsoft.Network/virtualNetworks', 'OPSTrainingVNET')]",
+    "MABSClientVMSubnetRef": "[concat(variables('MABSClientVMVnetID'), '/subnets/', variables('OPSTrainingVNETSubnet1Name'))]",
+    "MABSClientVMStorageAccountContainerName": "vhds",
+    "MABSClientVMNicName": "[concat(variables('MABSClientVMName'), 'NetworkInterface')]",
     "MABSDISK1": "[concat('http://',variables('vmstorageName'),'.blob.core.windows.net/','vhds','/','dataDisk1.vhd')]",
-    "MABSClientVm1-IPName": "MABSClientVm1-IP"
+    "MABSClientVM-IPName": "[concat('MABSClientVM',parameters('vmIndex'),'-IP')]"
   },
   "resources": [
     {
@@ -91,15 +99,15 @@
       "kind": "Storage"
     },
     {
-      "name": "[variables('MABSClientVM1NicName')]",
+      "name": "[variables('MABSClientVMNicName')]",
       "type": "Microsoft.Network/networkInterfaces",
       "location": "[resourceGroup().location]",
       "apiVersion": "2016-03-30",
       "dependsOn": [
-        "[resourceId('Microsoft.Network/publicIPAddresses', variables('MABSClientVm1-IPName'))]"
+        "[resourceId('Microsoft.Network/publicIPAddresses', variables('MABSClientVM-IPName'))]"
       ],
       "tags": {
-        "displayName": "MABSClientVM1Nic"
+        "displayName": "MABSClientVMNic"
       },
       "properties": {
         "ipConfigurations": [
@@ -108,10 +116,10 @@
             "properties": {
               "privateIPAllocationMethod": "Dynamic",
               "subnet": {
-                "id": "[variables('MABSClientVM1SubnetRef')]"
+                "id": "[variables('MABSClientVMSubnetRef')]"
               },
               "publicIPAddress": {
-                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('MABSClientVm1-IPName'))]"
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('MABSClientVM-IPName'))]"
               }
             }
           }
@@ -119,37 +127,37 @@
       }
     },
     {
-      "name": "[parameters('DomainJoinedVMName')]",
+      "name": "[variables('MABSClientVMName')]",
       "type": "Microsoft.Compute/virtualMachines",
       "location": "[resourceGroup().location]",
       "apiVersion": "2015-06-15",
       "dependsOn": [
         "[resourceId('Microsoft.Storage/storageAccounts', variables('vmstorageName'))]",
-        "[resourceId('Microsoft.Network/networkInterfaces', variables('MABSClientVM1NicName'))]"
+        "[resourceId('Microsoft.Network/networkInterfaces', variables('MABSClientVMNicName'))]"
       ],
       "tags": {
-        "displayName": "MABSClientVM1"
+        "displayName": "MABSClientVM"
       },
       "properties": {
         "hardwareProfile": {
-          "vmSize": "[variables('MABSClientVM1VmSize')]"
+          "vmSize": "[variables('MABSClientVMVmSize')]"
         },
         "osProfile": {
-          "computerName": "[parameters('DomainJoinedVMName')]",
+          "computerName": "[variables('MABSClientVMName')]",
           "adminUsername": "[parameters('adminUsername')]",
           "adminPassword": "[parameters('adminPassword')]"
         },
         "storageProfile": {
           "imageReference": {
-            "publisher": "[variables('MABSClientVM1ImagePublisher')]",
-            "offer": "[variables('MABSClientVM1ImageOffer')]",
-            "sku": "[parameters('DomainJoinedVMWindowsOSVersion')]",
+            "publisher": "[variables('MABSClientVMImagePublisher')]",
+            "offer": "[variables('MABSClientVMImageOffer')]",
+            "sku": "[parameters('VMWindowsOSVersion')]",
             "version": "latest"
           },
           "osDisk": {
-            "name": "MABSClientVM1OSDisk",
+            "name": "MABSClientVMOSDisk",
             "vhd": {
-              "uri": "[concat(reference(resourceId('Microsoft.Storage/storageAccounts', variables('vmstorageName')), '2016-01-01').primaryEndpoints.blob, variables('MABSClientVM1StorageAccountContainerName'), '/', variables('MABSClientVM1OSDiskName'), '.vhd')]"
+              "uri": "[concat(reference(resourceId('Microsoft.Storage/storageAccounts', variables('vmstorageName')), '2016-01-01').primaryEndpoints.blob, variables('MABSClientVMStorageAccountContainerName'), '/', variables('MABSClientVMOSDiskName'), '.vhd')]"
             },
             "caching": "ReadWrite",
             "createOption": "FromImage"
@@ -167,19 +175,20 @@
         "networkProfile": {
           "networkInterfaces": [
             {
-              "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('MABSClientVM1NicName'))]"
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('MABSClientVMNicName'))]"
             }
           ]
         }
       },
       "resources": [
         {
+          "condition": "[not(empty(parameters('DomainJoinscriptUrl')))]",
           "name": "DomainJoin",
           "type": "extensions",
           "location": "[resourceGroup().location]",
           "apiVersion": "2016-03-30",
           "dependsOn": [
-            "[resourceId('Microsoft.Compute/virtualMachines', parameters('DomainJoinedVMName'))]"
+            "[resourceId('Microsoft.Compute/virtualMachines', variables('MABSClientVMName'))]"
           ],
           "tags": {
             "displayName": "DomainJoin"
@@ -200,13 +209,13 @@
       ]
     },
     {
-      "name": "[variables('MABSClientVm1-IPName')]",
+      "name": "[variables('MABSClientVM-IPName')]",
       "type": "Microsoft.Network/publicIPAddresses",
       "location": "[resourceGroup().location]",
       "apiVersion": "2016-03-30",
       "dependsOn": [],
       "tags": {
-        "displayName": "MABSClientVm1-IP"
+        "displayName": "MABSClientVM-IP"
       },
       "properties": {
         "publicIPAllocationMethod": "Dynamic"
